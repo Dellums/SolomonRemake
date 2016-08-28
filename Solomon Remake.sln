@@ -1,0 +1,35 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2008
+
+Project("{14A83212-7D2F-B01B-4862-21CCD6F6D25F}") = "Solomon Remake", "Assembly-CSharp-firstpass.csproj", "{7DBF0E85-9451-A2F9-B5F3-64585C5147E4}"
+EndProject
+Project("{14A83212-7D2F-B01B-4862-21CCD6F6D25F}") = "Solomon Remake", "Assembly-CSharp.csproj", "{FB937B4D-6DE1-890D-03AA-61AB706255F4}"
+EndProject
+Project("{14A83212-7D2F-B01B-4862-21CCD6F6D25F}") = "Solomon Remake", "Assembly-CSharp-Editor.csproj", "{222F650B-DF83-9DB4-4C5E-78BD495DD361}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7DBF0E85-9451-A2F9-B5F3-64585C5147E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DBF0E85-9451-A2F9-B5F3-64585C5147E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DBF0E85-9451-A2F9-B5F3-64585C5147E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DBF0E85-9451-A2F9-B5F3-64585C5147E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB937B4D-6DE1-890D-03AA-61AB706255F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB937B4D-6DE1-890D-03AA-61AB706255F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB937B4D-6DE1-890D-03AA-61AB706255F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB937B4D-6DE1-890D-03AA-61AB706255F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{222F650B-DF83-9DB4-4C5E-78BD495DD361}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{222F650B-DF83-9DB4-4C5E-78BD495DD361}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{222F650B-DF83-9DB4-4C5E-78BD495DD361}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{222F650B-DF83-9DB4-4C5E-78BD495DD361}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Assembly-CSharp.csproj
+	EndGlobalSection
+EndGlobal
