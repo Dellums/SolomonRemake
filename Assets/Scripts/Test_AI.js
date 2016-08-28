@@ -6,6 +6,9 @@ var line 			: LineRenderer; //to hold the line Renderer
 var target 			: Transform; //to hold the transform of the target
 var agent 			: NavMeshAgent; //to hold the agent of this gameObject
 var LineDebug		: boolean = false;
+var Damage			: float[];
+var HPBar			: UI.Image;
+
 
 function Start(){
 	target = GameObject.FindWithTag("Player").transform;
@@ -13,26 +16,33 @@ function Start(){
     agent = GetComponent(NavMeshAgent); //get the agent
     getPath();
 }
-function LateUpdate(){
-	getPath();
+
+function Update(){
+	var curHealth : float = ((max_health*1.0 - hitcount*1.0) / max_health*1.0);
+	HPBar.fillAmount = curHealth;
+	HPTrack();
 
 	if(hitcount >= max_health){
 		gameObject.tag="Dead";
 		m_Animator.speed = 1.0;
-		if(m_Animator.speed == 1.0){
-			m_Animator.SetBool("Death", true);
-		}
-		else{
-			m_Animator.speed = 1.0;
-			m_Animator.SetBool("Death", true);
-		}
-		hitcount = 0;
+		m_Animator.SetBool("Death", true);
 		GetComponent.<Collider>().enabled = false;
 		agent.Stop();
-		EnemySpawn.Enemies -= 1;
-		playerInput.killedEnemies += 1;
 		killEnemy();
 	}
+}
+function HPTrack(){
+	var HPTracking = target.position - HPBar.transform.position;
+	HPTracking.y = 0;
+	var rotation = Quaternion.LookRotation(HPTracking);
+	HPBar.transform.rotation = Quaternion.Slerp(HPBar.transform.rotation, rotation, Time.deltaTime * 10);
+
+}
+
+
+function LateUpdate(){
+	getPath();
+
 	if (agent.remainingDistance <= agent.stoppingDistance){
 		if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
 		{
@@ -82,14 +92,18 @@ function DrawPath(path : NavMeshPath){
 
 function OnTriggerEnter (other : Collider) {
 	if(other.gameObject.tag == "Player_Spell"){
-		hitcount = hitcount +1;
-		// print("Hit: " + hitcount + " times!");
+		hitcount += Damage[0];
 		Destroy(other.gameObject);
 	}
 }
 
 function OnTriggerStay(other : Collider){
 	if(other.gameObject.tag == "Constant_Spell"){
-		print("Derpy");
+		hitcount += Damage[1];
 	}
+}
+
+function OnDestroy(){
+	EnemySpawn.Enemies -= 1;
+	playerInput.killedEnemies += 1;
 }

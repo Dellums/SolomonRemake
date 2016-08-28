@@ -22,16 +22,19 @@ var m_Animator: Animator;
 private var canMove :boolean = true;
 private var moveDirection : Vector3 = Vector3.zero;
 
+public static var MagicMissleCount = 0;
 var castLoc: Transform[];
 var spellCast: float = 10;
 var selectVal = 0;
+private var nextFire : float = 0.0;
+
 class spellSelection extends System.Object {
 
 	public var _spell: GameObject[];
 	public var _spellCost: float[];
+	public var _castSpeed: float[];
 	public var _spellImages:Sprite[];
 	public var _spellNames = new Array("MagicMissile", "FireBall", "FrostJet", "Lightning");
-	// public var _spellNames = new Array();
 }
 
 public var SpellSelect = spellSelection();
@@ -41,12 +44,9 @@ private var spellCost:float;
 private var spell_image:Sprite;
 private var spellName:String;
 private var FrostJetHold:Transform;
+private var castSpeed: float;
 
 function Awake(){
-	// for(var gOs in SpellSelect._spell){
-	// 	SpellSelect._spellNames.push(gOs.name);
-	// }
-	// print(SpellSelect._spellNames);
 	_FrostJet = Instantiate(SpellSelect._spell[2], transform.position, transform.rotation);
 	_FrostJet.transform.parent = transform;
 	_FrostJet.name = "FrostJetHolder";
@@ -57,6 +57,8 @@ function Awake(){
 	spellCost = spellinfo[1];
 	spell_image = spellinfo[2];
 	spellName = spellinfo[3];
+	spellNum = spellinfo[4];
+	castSpeed = spellinfo[5];
 	SpellsGui[1].sprite = spell_image; 
 }
 
@@ -71,7 +73,8 @@ function Update() {
 	if(HealthBar.fillAmount != 1){
 		HealthBar.fillAmount = HealthBar.fillAmount + healthRegenRate * Time.deltaTime;//.003;
 	}
-	if (Input.GetButton("Fire1")) {
+	if (Input.GetButton("Fire1") && Time.time > nextFire ) {
+		nextFire = Time.time + castSpeed;
 		CastSpell(spell, spellCost, spellName);
 	}
 	else{
@@ -82,7 +85,7 @@ function Update() {
 }
 function ScrollSelect(){
 	// 0 = Up one, 1 = selected, 2 = Down one
-	if (Input.GetAxis("Mouse ScrollWheel") > 0f ) // Up
+	if (Input.GetAxis("Mouse ScrollWheel") > 0f || Input.GetButtonDown("Cast") ) // Up
 	{
 		if(selectVal < SpellSelect._spellNames.length-1){
 			selectVal += 1;
@@ -106,6 +109,7 @@ function ScrollSelect(){
 	spell_image = spellinfo[2];
 	spellName = spellinfo[3];
 	spellNum = spellinfo[4];
+	castSpeed = spellinfo[5];
 	var spellNumUp = spellNum + 1; 
 	var spellNumDown = spellNum - 1;
 
@@ -122,16 +126,16 @@ function ScrollSelect(){
 
 function SpellCheck(){
 	if(SpellSelect._spellNames[selectVal] == "MagicMissile"){
-		return [SpellSelect._spell[0], SpellSelect._spellCost[0], SpellSelect._spellImages[0], SpellSelect._spellNames[0], 0];
+		return [SpellSelect._spell[0], SpellSelect._spellCost[0], SpellSelect._spellImages[0], SpellSelect._spellNames[0], 0, SpellSelect._castSpeed[0]];
 	}
 	else if(SpellSelect._spellNames[selectVal] == "FireBall"){
-		return [SpellSelect._spell[1], SpellSelect._spellCost[1], SpellSelect._spellImages[1], SpellSelect._spellNames[1], 1];
+		return [SpellSelect._spell[1], SpellSelect._spellCost[1], SpellSelect._spellImages[1], SpellSelect._spellNames[1], 1, SpellSelect._castSpeed[1]];
 	}
 	else if(SpellSelect._spellNames[selectVal] == "FrostJet"){
-		return [SpellSelect._spell[2], SpellSelect._spellCost[2], SpellSelect._spellImages[2], SpellSelect._spellNames[2], 2];
+		return [SpellSelect._spell[2], SpellSelect._spellCost[2], SpellSelect._spellImages[2], SpellSelect._spellNames[2], 2, SpellSelect._castSpeed[2]];
 	}
 	else if(SpellSelect._spellNames[selectVal] == "Lightning"){
-		return [SpellSelect._spell[3], SpellSelect._spellCost[3], SpellSelect._spellImages[3], SpellSelect._spellNames[3], 3];
+		return [SpellSelect._spell[3], SpellSelect._spellCost[3], SpellSelect._spellImages[3], SpellSelect._spellNames[3], 3, SpellSelect._castSpeed[3]];
 	}
 
 }
@@ -140,21 +144,23 @@ function CastSpell(_myspell, _myspellcost, _spellname){
 	if (ManaBar.fillAmount * 100 >= _myspellcost){
 		// Instantiate the projectile at the position and rotation of this transform
 		var clone : GameObject;
-		if(_spellname == "MagicMissile"){
+		if(_spellname == "MagicMissile" && MagicMissleCount < 24){
 			for(var i : int = 0; i < castLoc.length; i++)
 			{
 				clone = Instantiate(_myspell, castLoc[i].transform.position, transform.rotation);
 				clone.GetComponent.<Rigidbody>().AddForce(clone.transform.forward * spellCast);
 			}
+			ManaBar.fillAmount -= _myspellcost/100;
 		}
 		else if(_spellname == "FireBall"){
 			clone = Instantiate(_myspell, castLoc[i].transform.position, transform.rotation);
 			clone.GetComponent.<Rigidbody>().AddForce(clone.transform.forward * spellCast);
+			ManaBar.fillAmount -= _myspellcost/100;
 		}
 		else if(_spellname == "FrostJet"){
 			FrostJetHold.gameObject.SetActive(true);
+			ManaBar.fillAmount -= _myspellcost/100;
 		}
-		ManaBar.fillAmount -= _myspellcost/100;
 	}
 	else{
 		FrostJetHold.gameObject.SetActive(false);

@@ -6,12 +6,12 @@ var delay:float = .5;
 var target:Transform;
 var destination: Vector3;
 var agent: NavMeshAgent;
-var ball_Y : float = 2.4;
-
+var forceBlast:GameObject;
 enum MagicMissleNavigation {_Force, _navMesh}
 var magicMissleNavigation : MagicMissleNavigation;
 
 function Start() {
+	playerInput.MagicMissleCount += 1;
 	target = FindClosestEnemy();
 	agent = GetComponent.<NavMeshAgent>();
 	destination = agent.destination;
@@ -25,7 +25,7 @@ function Update() {
 	if(target.gameObject.tag == "Dead"){
 		target = FindClosestEnemy();
 	}
-	if(target.position == Vector3(0,0,0)){
+	if(target.gameObject.name == ".enemy"){
 		target = FindClosestEnemy();
 	}
 
@@ -65,17 +65,6 @@ function WaitAndtoTrack(){
 	
 	if(magicMissleNavigation == magicMissleNavigation._Force){
 		agent.enabled = false;
-		if (Mathf.Round((this.transform.position.y) * 100f) / 100f != ball_Y){
-			if (Mathf.Round((this.transform.position.y) * 100f) / 100f < ball_Y){
-				this.GetComponent.<Rigidbody>().AddForce(this.transform.up * 100);
-			}
-			else if (Mathf.Round((this.transform.position.y) * 100f) / 100f > ball_Y){
-				this.GetComponent.<Rigidbody>().AddForce(-this.transform.up * 100);
-			}
-		}
-		if (Mathf.Round((this.transform.position.y) * 100f) / 100f == ball_Y){
-			this.GetComponent.<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
-		}
 		
 		GetComponent.<Rigidbody>().velocity = Mathf.Clamp (GetComponent.<Rigidbody>().velocity.magnitude, 0, SpeedLimit) * GetComponent.<Rigidbody>().velocity.normalized;
 		if (target.transform.position != this.transform.position){
@@ -93,4 +82,10 @@ function WaitAndtoTrack(){
 
 
 	delay = 0;
+}
+
+function OnDestroy () {
+	var clone : GameObject;
+	playerInput.MagicMissleCount -= 1;
+	clone = Instantiate(forceBlast, transform.position, transform.rotation);
 }
